@@ -5,17 +5,99 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>OtoPazar</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#f4f6f8;color:#111}
-header{background:#111827;color:white;padding:22px;text-align:center}
-h1{margin:0;font-size:28px}
-nav{display:flex;gap:8px;padding:12px;background:white;overflow:auto}
-button{padding:12px 18px;border:0;border-radius:10px;background:#2563eb;color:white;font-weight:bold}
-main{padding:20px} .hero{background:white;padding:25px;border-radius:16px}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f5f8;color:#111827}
+header{background:#111827;color:#fff;padding:18px 16px;text-align:center}header h1{margin:0;font-size:30px}
+nav{display:flex;gap:10px;padding:14px;background:#fff;position:sticky;top:0;z-index:5;box-shadow:0 2px 8px #0001}
+button{border:0;border-radius:10px;padding:12px 16px;background:#2563eb;color:white;font-weight:700;cursor:pointer}
+nav button{flex:1}.container{max-width:900px;margin:auto;padding:18px}
+.card{background:white;border-radius:18px;padding:18px;margin-bottom:16px;box-shadow:0 3px 15px #00000012}
+.hero{padding:30px 20px;text-align:center}.hero h2{font-size:32px;margin:10px 0}
+input,select,textarea{width:100%;padding:13px;margin:7px 0 14px;border:1px solid #d1d5db;border-radius:10px;font-size:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px}
+.car{overflow:hidden;padding:0}.car img{width:100%;height:190px;object-fit:cover;background:#ddd}.carbody{padding:15px}.price{font-size:22px;font-weight:800;color:#2563eb}.muted{color:#6b7280}.row{display:flex;gap:8px;align-items:center;justify-content:space-between}.danger{background:#dc2626}.secondary{background:#e5e7eb;color:#111827}.hidden{display:none}.empty{text-align:center;padding:35px;color:#6b7280}
+label{font-weight:700;font-size:14px}
 </style>
 </head>
 <body>
-<header><h1>🚗 OtoPazar</h1></header>
-<nav><button>İlanlar</button><button>İlan Ver</button><button>Favoriler</button></nav>
-<main><div class="hero"><h2>Aracını kolayca bul</h2><p>Binlerce araç arasından seçim yap.</p></div></main>
+<header><h1>🚗 OtoPazar</h1><div>Güvenli ve kolay araç ilan platformu</div></header>
+<nav>
+<button onclick="show('list')">İlanlar</button>
+<button onclick="show('add')">İlan Ver</button>
+<button onclick="show('fav')">Favoriler</button>
+</nav>
+
+<main class="container">
+<section id="list">
+<div class="card hero"><h2>Aracını kolayca bul</h2><p>Marka, model veya şehir ara.</p>
+<input id="search" placeholder="Örn: Caddy, Doblo, Ankara..." oninput="render()"></div>
+<div id="cars" class="grid"></div>
+</section>
+
+<section id="add" class="hidden">
+<div class="card"><h2>Yeni İlan Ver</h2>
+<label>Marka</label><input id="brand" placeholder="Volkswagen">
+<label>Model</label><input id="model" placeholder="Caddy">
+<label>Yıl</label><input id="year" type="number" placeholder="2021">
+<label>Fiyat (TL)</label><input id="price" type="number" placeholder="985000">
+<label>KM</label><input id="km" type="number" placeholder="89000">
+<label>Şehir</label><input id="city" placeholder="Ankara">
+<label>Fotoğraf URL'si (isteğe bağlı)</label><input id="image" placeholder="https://...">
+<label>Açıklama</label><textarea id="desc" rows="4" placeholder="Aracın özellikleri, boya/değişen ve hasar kaydı..."></textarea>
+<button onclick="addCar()">İlanı Yayınla</button>
+</div></section>
+
+<section id="fav" class="hidden">
+<div class="card"><h2>❤️ Favoriler</h2><div id="favorites" class="grid"></div></div>
+</section>
+</main>
+
+<script>
+const key='otopazar_cars';
+const favKey='otopazar_favs';
+let cars=JSON.parse(localStorage.getItem(key)||'null')||[
+{id:1,brand:'Volkswagen',model:'Caddy',year:2021,price:985000,km:89000,city:'Ankara',image:'',desc:'Temiz ve bakımlı araç ilanı.'},
+{id:2,brand:'Peugeot',model:'Partner Tepee Zenith',year:2017,price:650000,km:245000,city:'Ankara',image:'',desc:'Cam tavan, dijital klima, geri görüş kamerası.'}
+];
+let favs=JSON.parse(localStorage.getItem(favKey)||'[]');
+
+function save(){localStorage.setItem(key,JSON.stringify(cars));localStorage.setItem(favKey,JSON.stringify(favs))}
+function show(id){
+['list','add','fav'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));
+if(id==='list')render(); if(id==='fav')renderFav();
+window.scrollTo(0,0);
+}
+function card(c){
+let f=favs.includes(c.id);
+return `<div class="card car">
+${c.image?`<img src="${escapeHtml(c.image)}" alt="Araç">`:`<div style="height:190px;background:#e5e7eb;display:grid;place-items:center;font-size:60px">🚘</div>`}
+<div class="carbody"><div class="row"><h3>${escapeHtml(c.brand)} ${escapeHtml(c.model)}</h3><button class="secondary" onclick="toggleFav(${c.id})">${f?'❤️':'🤍'}</button></div>
+<div class="price">${Number(c.price).toLocaleString('tr-TR')} TL</div>
+<p>${c.year} • ${Number(c.km).toLocaleString('tr-TR')} km • ${escapeHtml(c.city)}</p>
+<p class="muted">${escapeHtml(c.desc||'')}</p>
+<div class="row"><button onclick="detail(${c.id})">Detay</button><button class="danger" onclick="removeCar(${c.id})">Sil</button></div>
+</div></div>`;
+}
+function render(){
+let q=(document.getElementById('search')?.value||'').toLowerCase();
+let arr=cars.filter(c=>(c.brand+' '+c.model+' '+c.city).toLowerCase().includes(q));
+document.getElementById('cars').innerHTML=arr.length?arr.map(card).join(''):`<div class="card empty">Aradığın kriterde ilan yok.</div>`;
+}
+function renderFav(){
+let arr=cars.filter(c=>favs.includes(c.id));
+document.getElementById('favorites').innerHTML=arr.length?arr.map(card).join(''):`<div class="empty">Henüz favori ilan yok.</div>`;
+}
+function toggleFav(id){favs.includes(id)?favs=favs.filter(x=>x!==id):favs.push(id);save();render();renderFav()}
+function addCar(){
+let c={id:Date.now(),brand:v('brand'),model:v('model'),year:+v('year')||0,price:+v('price')||0,km:+v('km')||0,city:v('city'),image:v('image'),desc:v('desc')};
+if(!c.brand||!c.model||!c.price){alert('Marka, model ve fiyat zorunlu.');return}
+cars.unshift(c);save();['brand','model','year','price','km','city','image','desc'].forEach(x=>document.getElementById(x).value='');
+alert('İlan yayınlandı.');show('list');
+}
+function removeCar(id){if(confirm('Bu ilan silinsin mi?')){cars=cars.filter(c=>c.id!==id);favs=favs.filter(x=>x!==id);save();render();renderFav()}}
+function detail(id){let c=cars.find(x=>x.id===id);alert(`${c.brand} ${c.model}\n${c.year} • ${c.km.toLocaleString('tr-TR')} km\n${c.price.toLocaleString('tr-TR')} TL\n${c.city}\n\n${c.desc}`)}
+function v(id){return document.getElementById(id).value.trim()}
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+render();
+</script>
 </body>
 </html>
