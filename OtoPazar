@@ -1,0 +1,109 @@
+<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OtoPazar</title><style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
+body{background:#f3f5f7;color:#17202a;padding-bottom:80px}
+header{background:#111827;color:white;padding:20px;border-radius:0 0 25px 25px}
+.top{display:flex;justify-content:space-between}.logo{font-size:27px;font-weight:900}
+.logo b{color:#35d27c}
+h1{margin-top:25px}
+.search{margin-top:18px;background:white;border-radius:13px;padding:6px;display:flex}
+.search input{flex:1;border:0;padding:12px;outline:0}.search button{background:#35d27c;color:white;border:0;border-radius:9px;padding:12px}
+main{width:94%;max-width:1100px;margin:25px auto}
+.head{display:flex;justify-content:space-between;align-items:center;margin:25px 0 14px}
+.head button{border:0;background:none;color:#18a961;font-weight:bold}
+.categories,.brands{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.category,.brand{background:white;border-radius:15px;padding:15px 5px;text-align:center;box-shadow:0 3px 12px #0000000d}
+.category div{font-size:27px}.category small{font-weight:bold}.brand img{width:42px;height:42px;object-fit:contain}.brand b{display:block;font-size:11px;margin-top:7px}
+.cars{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:15px}
+.car{background:white;border-radius:17px;overflow:hidden;box-shadow:0 3px 15px #0001}
+.car img{width:100%;height:180px;object-fit:cover}.car .info{padding:14px}
+.price{font-size:20px;font-weight:bold;margin:8px 0}.details{color:#737b84;font-size:13px;line-height:1.6}
+.view,.publish{width:100%;padding:12px;border:0;border-radius:9px;background:#111827;color:white;margin-top:10px}nav{position:fixed;bottom:0;left:0;right:0;height:70px;background:white;display:flex;justify-content:space-around;align-items:center;z-index:20;border-top:1px solid #ddd}
+nav div{text-align:center;font-size:11px;color:#777}nav span{display:block;font-size:21px}
+.add{width:55px;height:55px;border:0;border-radius:50%;background:#35d27c;color:white;font-size:28px;margin-top:-25px}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:50;align-items:flex-end}
+.box{background:white;width:100%;max-height:94vh;overflow:auto;border-radius:25px 25px 0 0;padding:20px}
+.close{float:right;border:0;border-radius:50%;font-size:22px;width:35px;height:35px}.box label{display:block;font-weight:bold;font-size:13px;margin:14px 0 6px}
+.box input,.box select,.box textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:9px;background:#fafafa}
+.box textarea{height:100px}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.photo{border:2px dashed #bbb;border-radius:14px;padding:25px;text-align:center;margin-top:15px}
+.photo input{display:none}.preview{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.preview img{width:100%;height:70px;object-fit:cover;border-radius:7px}
+.trade{display:flex;justify-content:space-between;background:#f3f5f7;padding:14px;margin-top:15px;border-radius:10px}
+.publish{background:#35d27c;font-size:16px;font-weight:bold}</style></head><body>
+<header><div class="top"><div class="logo">Oto<b>Pazar</b></div><div>👤</div></div>
+<h1>Aracını bul.</h1><p style="color:#aab3bf">Binlerce araç, tek yerde.</p>
+<div class="search"><input id="q" placeholder="Marka veya model ara..."><button onclick="search()">🔎</button></div></header>
+<main>
+<div class="head"><h2>Araç Türleri</h2><button onclick="show(cars)">Tümü</button></div>
+<div class="categories">
+<div class="category" onclick="filter('Otomobil')"><div>🚗</div><small>Otomobil</small></div>
+<div class="category" onclick="filter('SUV')"><div>🚙</div><small>SUV / Arazi</small></div><div class="category" onclick="filter('Minivan')"><div>🚐</div><small>Minivan</small></div>
+<div class="category" onclick="filter('Ticari')"><div>🚚</div><small>Ticari</small></div>
+<div class="category" onclick="filter('Pickup')"><div>🛻</div><small>Pickup</small></div>
+<div class="category" onclick="filter('Spor')"><div>🏎️</div><small>Spor</small></div>
+<div class="category" onclick="filter('Elektrikli')"><div>⚡</div><small>Elektrikli</small></div>
+<div class="category" onclick="filter('Motosiklet')"><div>🏍️</div><small>Motosiklet</small></div>
+</div>
+<div class="head"><h2>Popüler Markalar</h2><button onclick="brandsOpen()">Tüm Markalar</button></div>
+<div class="brands" id="brands"></div>
+<div class="head"><h2>İlanlar</h2><button onclick="show(cars)">Tümü</button></div>
+<div class="cars" id="cars"></div>
+</main><div class="category" onclick="filter('Minivan')"><div>🚐</div><small>Minivan</small></div>
+<div class="category" onclick="filter('Ticari')"><div>🚚</div><small>Ticari</small></div>
+<div class="category" onclick="filter('Pickup')"><div>🛻</div><small>Pickup</small></div>
+<div class="category" onclick="filter('Spor')"><div>🏎️</div><small>Spor</small></div>
+<div class="category" onclick="filter('Elektrikli')"><div>⚡</div><small>Elektrikli</small></div>
+<div class="category" onclick="filter('Motosiklet')"><div>🏍️</div><small>Motosiklet</small></div>
+</div>
+<div class="head"><h2>Popüler Markalar</h2><button onclick="brandsOpen()">Tüm Markalar</button></div>
+<div class="brands" id="brands"></div>
+<div class="head"><h2>İlanlar</h2><button onclick="show(cars)">Tümü</button></div>
+<div class="cars" id="cars"></div>
+</main><nav><div>🏠<span>Ana Sayfa</span></div><div onclick="brandsOpen()">🔎<span>Ara</span></div><button class="add" onclick="newListing()">+</button><div>❤️<span>Favoriler</span></div><div>👤<span>Hesabım</span></div></nav>
+<div class="modal" id="listModal"><div class="box">
+<button class="close" onclick="closeListing()">×</button><h2>Yeni İlan Ver</h2>
+<label>Fotoğraflar</label><label class="photo">📷 Fotoğraf Ekle<input id="photos" type="file" accept="image/*" multiple onchange="photosPreview(event)"><div id="preview" class="preview"></div></label>
+<label>Araç Türü</label><select id="type"><option>Otomobil</option><option>SUV</option><option>Minivan</option><option>Ticari</option><option>Pickup</option><option>Spor</option><option>Elektrikli</option></select><label>Marka</label><select id="brand" onchange="models()"></select>
+<label>Model</label><select id="model"></select>
+<div class="two"><div><label>Yıl</label><input id="year" type="number" placeholder="2024"></div>
+<div><label>KM</label><input id="km" type="number" placeholder="90000"></div></div>
+<label>Fiyat</label><input id="price" type="number" placeholder="985000">
+<label>Yakıt</label><select id="fuel"><option>Dizel</option><option>Benzin</option><option>Hibrit</option><option>Elektrik</option><option>LPG</option></select>
+<label>Vites</label><select id="gear"><option>Manuel</option><option>Otomatik</option><option>Yarı Otomatik</option></select>
+<label>Boya</label><select id="paint"><option>Boyasız</option><option>Lokal Boya</option><option>1 Parça Boyalı</option><option>2 Parça Boyalı</option><option>3+ Parça Boyalı</option></select><label>Değişen</label><select id="changed"><option>Değişensiz</option><option>1 Parça Değişen</option><option>2 Parça Değişen</option><option>3+ Parça Değişen</option></select>
+<label>Hasar Kaydı (TL)</label><input id="damage" type="number" placeholder="0">
+<label>Şehir</label><select id="city"><option>Ankara</option><option>İstanbul</option><option>İzmir</option><option>Bursa</option><option>Samsun</option><option>Antalya</option></select>
+<label>Açıklama</label><textarea id="desc" placeholder="Aracın hakkında bilgi ver..."></textarea>
+<div class="trade"><b>Takas düşünülüyor</b><input id="trade" type="checkbox"></div>
+<button class="publish" onclick="publish()">🚀 İlanı Yayınla</button>
+</div></div>
+<div class="modal" id="brandModal"><div class="box"><button class="close" onclick="brandsClose()">×</button><h2>Tüm Markalar</h2><input id="brandSearch" oninput="brandSearch()" placeholder="Marka ara..."><div id="allBrands"></div></div></div><script>
+const brands=["Volkswagen","Peugeot","Fiat","Toyota","BMW","Mercedes-Benz","Audi","Ford","Renault","Opel","Citroen","Dacia","Honda","Hyundai","Kia","Nissan","Skoda","Seat","Volvo","Togg","Tesla","Jeep","Land Rover","Porsche","Ferrari","Lamborghini","Maserati","Mazda","Suzuki","Subaru","MG","Chery","BYD","Mini","Jaguar","Bentley","McLaren","Aston Martin","Rolls-Royce","Bugatti"];
+const modelsList={
+"Volkswagen":["Polo","Golf","Passat","T-Roc","Tiguan","Caddy","Transporter","Crafter"],
+"Peugeot":["208","308","408","508","2008","3008","5008","Partner","Rifter","Expert"],
+"Fiat":["Egea","Doblo","Fiorino","500","Panda"],
+"Toyota":["Yaris","Corolla","C-HR","RAV4","Hilux","Proace"],
+"BMW":["1 Serisi","3 Serisi","5 Serisi","7 Serisi","X1","X3","X5"],"Mercedes-Benz":["A Serisi","C Serisi","E Serisi","S Serisi","GLA","GLC","GLE","Vito","Sprinter"],
+"Audi":["A3","A4","A5","A6","Q2","Q3","Q5","Q7","Q8"],
+"Ford":["Fiesta","Focus","Puma","Kuga","Ranger","Tourneo Courier","Transit"],
+"Renault":["Clio","Megane","Captur","Austral","Kangoo","Trafic","Master"],
+"Togg":["T10X","T10F"]
+};
+let cars=[
+{brand:"Volkswagen",model:"Caddy",year:2022,km:"89.000 KM",price:985000,type:"Ticari",image:"https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=900&q=80"},
+{brand:"Peugeot",model:"Partner",year:2017,km:"245.000 KM",price:650000,type:"Ticari",image:"https://images.unsplash.com/photo-1504215680853-026ed2a45def?auto=format&fit=crop&w=900&q=80"},{brand:"Toyota",model:"Corolla",year:2023,km:"54.000 KM",price:1250000,type:"Otomobil",image:"https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=900&q=80"},
+{brand:"BMW",model:"320i",year:2021,km:"72.000 KM",price:2100000,type:"Otomobil",image:"https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=900&q=80"}
+];
+function show(list){let x=document.getElementById("cars");x.innerHTML="";list.forEach((c,i)=>{x.innerHTML+=`<div class="car"><img src="${c.image}"><div class="info"><h3>${c.brand} ${c.model}</h3><div class="price">${c.price.toLocaleString("tr-TR")} TL</div><div class="details">${c.year} Model<br>${c.km}<br>${c.type}</div><button class="view">İlanı Gör</button></div></div>`})}function filter(t){show(cars.filter(c=>c.type==t))}
+function search(){let q=document.getElementById("q").value.toLowerCase();show(cars.filter(c=>(c.brand+" "+c.model).toLowerCase().includes(q)))}
+function brandsOpen(){document.getElementById("brandModal").style.display="flex";renderBrands()}
+function brandsClose(){document.getElementById("brandModal").style.display="none"}
+function renderBrands(list=brands){let x=document.getElementById("allBrands");x.innerHTML="";list.forEach(b=>{x.innerHTML+=`<button onclick="brandFilter('${b}')" style="width:100%;padding:12px;margin:3px;border:0;border-radius:9px;text-align:left">${b}</button>`})}
+function brandFilter(b){show(cars.filter(c=>c.brand==b));brandsClose()}
+function brandSearch(){let q=document.getElementById("brandSearch").value.toLowerCase();renderBrands(brands.filter(b=>b.toLowerCase().includes(q)))}function newListing(){document.getElementById("listModal").style.display="flex";let x=document.getElementById("brand");x.innerHTML='<option value="">Marka seç</option>';brands.forEach(b=>x.innerHTML+=`<option>${b}</option>`)}
+function closeListing(){document.getElementById("listModal").style.display="none"}
+function models(){let b=document.getElementById("brand").value,x=document.getElementById("model");x.innerHTML="";(modelsList[b]||["Diğer"]).forEach(m=>x.innerHTML+=`<option>${m}</option>`)}
+function photosPreview(e){let x=document.getElementById("preview");x.innerHTML="";[...e.target.files].forEach(f=>{let r=new FileReader();r.onload=a=>x.innerHTML+=`<img src="${a.target.result}">`;r.readAsDataURL(f)})}function publish(){let b=document.getElementById("brand").value,m=document.getElementById("model").value,y=document.getElementById("year").value,k=document.getElementById("km").value,p=document.getElementById("price").value,t=document.getElementById("type").value;if(!b||!m||!y||!k||!p){alert("Marka, model, yıl, KM ve fiyat zorunlu.");return}cars.unshift({brand:b,model:m,year:y,km:Number(k).toLocaleString("tr-TR")+" KM",price:Number(p),type:t,image:"https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=900&q=80"});show(cars);closeListing();alert("İlan yayınlandı!")}
+renderBrands();show(cars);
+</script></body></html>
